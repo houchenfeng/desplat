@@ -1,2 +1,3 @@
-# desplat
-DeSplat: Decomposed Gaussian Splatting for Distractor-Free Rendering
+# DeSplat: Decomposed Gaussian Splatting for Distractor-Free Rendering
+
+Code coming soon.
