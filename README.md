@@ -211,7 +211,7 @@ Adding the `--use_saved_embedding` flag loads the saved appearance embeddings.
 
 ```
 @InProceedings{wang2024desplat,
-    title={{DeSplat}: Decomposed Gaussian Splatting for Distractor-Free Rendering},
+    title={{DeSplat}: Decomposed {G}aussian Splatting for Distractor-Free Rendering},
     author={Wang, Yihao and Klasson, Marcus and Turkulainen, Matias and Wang, Shuzhe and Kannala, Juho and Solin, Arno},
     booktitle={IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
     year={2025}
