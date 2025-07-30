@@ -63,28 +63,35 @@ class OnthegoDataParser(ColmapDataParser):
         self.config.downscale_factor = (
             4 if self.data.name == "patio" or self.data.name == "arcdetriomphe" else 8
         )
-
+        if self.data.name == "data_0.3":
+            self.config.downscale_factor = (
+           2
+        )
+        print("self.data.name ",self.data.name ," self.config.downscale_factor ",self.config.downscale_factor)
     def _get_image_indices(self, image_filenames, split):
         # Load the split file to get the train/eval split
-        with open(os.path.join(self.config.data, "split.json"), "r") as file:
-            split_json = json.load(file)
+        if os.path.exists(os.path.join(self.config.data, "split.json")):
+            with open(os.path.join(self.config.data, "split.json"), "r") as file:
+                split_json = json.load(file)
 
-        # Select the split according to the split file.
-        all_indices = np.arange(len(image_filenames))
+            # Select the split according to the split file.
+            all_indices = np.arange(len(image_filenames))
 
-        i_eval = all_indices[split_json["extra"]]
+            i_eval = all_indices[split_json["extra"]]
 
-        i_train = all_indices[split_json["clutter"]]
+            i_train = all_indices[split_json["clutter"]]
 
-        if self.config.eval_train:
-            i_eval = i_train
-        if split == "train":
-            indices = i_train
-        elif split in ["val", "test"]:
-            indices = i_eval
+            if self.config.eval_train:
+                i_eval = i_train
+            if split == "train":
+                indices = i_train
+            elif split in ["val", "test"]:
+                indices = i_eval
+            else:
+                raise ValueError(f"Unknown dataparser split {split}")
         else:
-            raise ValueError(f"Unknown dataparser split {split}")
-
+            # If no split file is provided, use all images for training
+            indices = np.arange(len(image_filenames))
         return indices
 
 
