@@ -65,7 +65,7 @@ class OnthegoDataParser(ColmapDataParser):
         )
         if self.data.name == "data_0.3":
             self.config.downscale_factor = (
-           2
+           8
         )
         print("self.data.name ",self.data.name ," self.config.downscale_factor ",self.config.downscale_factor)
     def _get_image_indices(self, image_filenames, split):

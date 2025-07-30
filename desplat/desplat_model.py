@@ -75,6 +75,8 @@ class DeSplatModelConfig(SplatfactoModelConfig):
     """Whether to continue splitting for dynamic points after step for splitting stops"""
     distance: float = 0.02
     """Distance of dynamic points from camera"""
+    split_screen_size :float = 0.05
+    """Screen size threshold for splitting dynamic points"""
 
     ### Settings for Regularization
     alpha_bg_loss_lambda: float = 0.01
@@ -650,7 +652,7 @@ class DeSplatModel(SplatfactoModel):
 
         below_alpha_count = torch.sum(culls).item()
         toobigs_count = 0
-        if extra_cull_mask is not None:
+        if extra_cull_mask is not None and extra_cull_mask.shape[0] == n_bef:
             culls = culls | extra_cull_mask
 
         if self.step > self.config.refine_every * self.config.reset_alpha_every:
@@ -693,14 +695,37 @@ class DeSplatModel(SplatfactoModel):
         centered_samples = torch.randn(
             (samps * n_splits, 3), device=self.device
         )  # Nx3 of axis-aligned scales
+
+        # if split_mask.sum().item() == 0:
+        #     out = {}
+            
+        #     for name, param in self.gauss_params_dyn_dict[str(i)].items():
+        #         if name not in out:
+        #             out[name] = param.repeat(samps, 1)
+        #     return out
+
+        # print("self.gauss_params_dyn_dict[str(i)]['scales_dyn']",self.gauss_params_dyn_dict[str(i)]['scales_dyn'].shape)
+        # print("self.gauss_params_dyn_dict[str(i)]['scales_dyn'][split_mask]",str(i),self.gauss_params_dyn_dict[str(i)]["scales_dyn"][split_mask].shape)
+        # print("split_mask", split_mask.shape,split_mask)
+        # mask=self.gauss_params_dyn_dict[str(i)]["scales_dyn"][split_mask]
+        # print( mask)
+        if len(split_mask.shape) == 0:
+            split_mask = torch.tensor([True], device='cuda:0')
+        # print("split_mask",split_mask.shape)
+        # print("samps",samps)
+        # print("self.gauss_params_dyn_dict[str(i)]['scales_dyn'][split_mask]",str(i),self.gauss_params_dyn_dict[str(i)]["scales_dyn"][split_mask].shape)
+
+        # print("self.gauss_params_dyn_dict[str(i)]['scales_dyn']",self.gauss_params_dyn_dict[str(i)]['scales_dyn'].shape)
         scaled_samples = (
             torch.exp(
-                self.gauss_params_dyn_dict[str(i)]["scales_dyn"][split_mask].repeat(
+                self.gauss_params_dyn_dict[str(i)]['scales_dyn'][split_mask].repeat(
                     samps, 1
                 )
             )
             * centered_samples
         )  # how these scales are rotated
+        
+        # print('mask',mask.shape,mask)
         quats = self.gauss_params_dyn_dict[str(i)]["quats_dyn"][
             split_mask
         ] / self.gauss_params_dyn_dict[str(i)]["quats_dyn"][split_mask].norm(
