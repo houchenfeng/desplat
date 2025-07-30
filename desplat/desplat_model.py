@@ -75,7 +75,7 @@ class DeSplatModelConfig(SplatfactoModelConfig):
     """Whether to continue splitting for dynamic points after step for splitting stops"""
     distance: float = 0.02
     """Distance of dynamic points from camera"""
-    split_screen_size :float = 0.05
+    split_screen_size :float = 0.045
     """Screen size threshold for splitting dynamic points"""
 
     ### Settings for Regularization
